@@ -56,7 +56,7 @@ class Test:
         for test in self.tests:
             file_name = str(tests_dir / test)
 
-            with open(file_name, 'r') as file:
+            with open(file_name, 'r', encoding='utf-8') as file:
                 stdout_dev = None if self.show_stdout else subprocess.DEVNULL
                 stderr_dev = None if self.show_stderr else subprocess.DEVNULL
                 p = subprocess.run(['python', program], stdin=file, stdout=stdout_dev, stderr=stderr_dev)
@@ -96,7 +96,7 @@ class Tester:
 
 
 def main():
-    with open('test.json', 'r') as file:
+    with open('test.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
 
     program = '.' / Path(data['app'])

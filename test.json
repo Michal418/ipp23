@@ -12,13 +12,38 @@
             "code": 0,
             "inputs": [
                 ".IPPcode24\nWRITE int@-5\n",
+                ".IPPcode24\nWRITE int@000000000000\n",
+                ".IPPcode24\nWRITE bool@true\n",
+                ".IPPcode24\nWRITE bool@false\n",
+                ".IPPcode24\nWRITE string@hf\\010fjs\n",
                 ".IPPcode24\nWRITE string@ahoj\n",
                 ".IPPcode24\nWRITE string@ahoj\\013ahoj\n",
                 ".IPPcode24\nWRITE string@\n",
-                ".IPPcode24\nWRITE int@000000000000\n",
-                ".IPPcode24\nWRITE bool@true\n",
-                ".IPPcode24\nWRITE string@hf\\010fjs\n",
-                ".IPPcode24\nWRITE bool@false\n"
+                ".IPPcode24\nWRITE string@!@$%^&*()<>?:\"{}`~\n",
+                ".IPPcode24\nWRITE string@příliž_žluťoučkž_koník\n",
+                ".IPPcode24\nWRITE string@インターネット・バブル\n"
+            ]
+        },
+        {
+            "description": "labels",
+            "code": 0,
+            "inputs": [
+                ".IPPcode24\nlabel hf\\010fjs\n",
+                ".IPPcode24\nlabel ahoj\n",
+                ".IPPcode24\nlabel ahoj\\013ahoj\n",
+                ".IPPcode24\nlabel !@$%^&*()<>?:\"{}`~\n",
+                ".IPPcode24\nlabel příliž_žluťoučkž_koník\n",
+                ".IPPcode24\nlabel インターネット・バブル\n"
+            ]
+        },
+        {
+            "description": "bad-labels",
+            "code": 23,
+            "inputs": [
+                ".IPPcode24\nlabel !hf\\\\010fjs\n",
+                ".IPPcode24\nlabel ah\\oj\n",
+                ".IPPcode24\nlabel ahoj\\a13ahoj\n",
+                ".IPPcode24\nlabel !\\@$%^&*()<>?:\"{}`~\n"
             ]
         },
         {

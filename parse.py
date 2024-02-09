@@ -3,7 +3,7 @@ import re
 from sys import stderr, stdout, exit, argv
 import fileinput
 from xml.dom import minidom
-from xml.sax.saxutils import escape
+# from xml.sax.saxutils import escape
 
 
 class ParseError(Exception):
@@ -201,7 +201,7 @@ def main():
         raise ParseError('Zakázaná kombinace parametrů', 10)
 
     try:
-        lines = fileinput.input()
+        lines = fileinput.input(encoding='utf-8')
     except Exception as err:
         raise ParseError(str(err), 11)
 
@@ -209,7 +209,7 @@ def main():
     document = instructions_to_xml(instructions)
 
     try:
-        document.writexml(stdout, indent='  ', addindent='  ', newl='\n')
+        document.writexml(stdout, indent='  ', addindent='  ', newl='\n', encoding='utf-8')
     except Exception as err:
         raise ParseError(str(err), 12)
 
