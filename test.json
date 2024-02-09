@@ -1,0 +1,60 @@
+{
+    "app": "parse.py",
+    "input-directory": "tests",
+    "tests": [
+        {
+            "description": "basic",
+            "code": 0,
+            "files": ["basic.txt", "test.txt"]
+        },
+        {
+            "description": "literals",
+            "code": 0,
+            "inputs": [
+                ".IPPcode24\nWRITE int@-5\n",
+                ".IPPcode24\nWRITE string@ahoj\n",
+                ".IPPcode24\nWRITE string@ahoj\\013ahoj\n",
+                ".IPPcode24\nWRITE string@\n",
+                ".IPPcode24\nWRITE int@000000000000\n",
+                ".IPPcode24\nWRITE bool@true\n",
+                ".IPPcode24\nWRITE string@hf\\010fjs\n",
+                ".IPPcode24\nWRITE bool@false\n"
+            ]
+        },
+        {
+            "description": "bad-literals",
+            "code": 23,
+            "stderr": "hide",
+            "inputs": [
+                ".IPPcode24\nWRITE int@notint\n",
+                ".IPPcode24\nWRITE nil@jfdskajflskdajflksdjf\n",
+                ".IPPcode24\nWRITE string@hf fjs\n",
+                ".IPPcode24\nWRITE string@hf \t fjs\n",
+                ".IPPcode24\nWRITE string@hf\\fjdksfjs\n"
+            ]
+        },
+        {
+            "description": "header",
+            "code": 21,
+            "stderr": "hide",
+            "files": ["empty.txt", "before-header.txt", "header-second-line.txt"]
+        },
+        {
+            "description": "opcode",
+            "code": 22,
+            "stderr": "hide",
+            "files": ["opcode.txt"]
+        },
+        {
+            "description": "syntax",
+            "code": 23,
+            "stderr": "hide",
+            "files": ["move-label.txt"],
+            "inputs": [
+                ".IPPcode24\nDEFVAR somelabel\n",
+                ".IPPcode24\nPUSHS someucglabel\n",
+                ".IPPcode24\nRETURN TF@ahoj\n"
+            ]
+        }
+    ]
+}

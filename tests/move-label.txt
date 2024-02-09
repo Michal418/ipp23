@@ -1,0 +1,3 @@
+.IPPcode24
+
+MOVE somelabel int@1

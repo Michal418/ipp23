@@ -1,0 +1,224 @@
+.IPPcode24
+move LF@var int@002
+move TF@var int@002
+move GF@var int@002
+move GF@var LF@bar
+move GF@var TF@bar
+move GF@var GF@bar
+move GF@var string@str
+move GF@var bool@true
+move GF@var bool@false
+move GF@var nil@nil
+
+CREATEFRAME
+PUSHFRAME
+POPFRAME
+
+DEFVAR TF@Vvar
+DEFVAR GF@Vvar
+DEFVAR LF@Vvar
+
+CALL label
+RETURN
+
+PUSHS int@0987390
+PUSHS bool@true
+PUSHS bool@false
+PUSHS nil@nil
+PUSHS string@somegshjelk\098rjs
+PUSHS LF@ksdfj
+PUSHS GF@ksdfj
+PUSHS TF@ksdfj
+
+POPS TF@var
+POPS GF@var
+POPS LF@var
+
+ADD LF@var int@83742 int@83742
+ADD GF@var int@83742 int@83742
+ADD TF@var int@83742 int@83742
+ADD LF@var int@83742 string@string
+ADD GF@var int@83742 string@string
+ADD TF@var int@83742 string@string
+ADD LF@var LF@a83742 string@string
+ADD GF@var int@83742 LF@string
+ADD TF@var LF@a83742 LF@LF
+
+SUB LF@var int@83742 int@83742
+SUB GF@var int@83742 int@83742
+SUB TF@var int@83742 int@83742
+SUB LF@var int@83742 string@string
+SUB GF@var int@83742 string@string
+SUB TF@var int@83742 string@string
+SUB LF@var LF@a83742 string@string
+SUB GF@var int@83742 LF@string
+SUB TF@var LF@a83742 LF@LF
+
+MUL LF@var int@83742 int@83742
+MUL GF@var int@83742 int@83742
+MUL TF@var int@83742 int@83742
+MUL LF@var int@83742 string@string
+MUL GF@var int@83742 string@string
+MUL TF@var int@83742 string@string
+MUL LF@var LF@a83742 string@string
+MUL GF@var int@83742 LF@string
+MUL TF@var LF@a83742 LF@LF
+
+IMUL LF@var int@83742 int@83742
+IMUL GF@var int@83742 int@83742
+IMUL TF@var int@83742 int@83742
+IMUL LF@var int@83742 string@string
+IMUL GF@var int@83742 string@string
+IMUL TF@var int@83742 string@string
+IMUL LF@var LF@a83742 string@string
+IMUL GF@var int@83742 LF@string
+IMUL TF@var LF@a83742 LF@LF
+
+LT LF@var int@83742 int@83742
+LT GF@var int@83742 int@83742
+LT TF@var int@83742 int@83742
+LT LF@var int@83742 string@string
+LT GF@var int@83742 string@string
+LT TF@var int@83742 string@string
+LT LF@var LF@a83742 string@string
+LT GF@var int@83742 LF@string
+LT TF@var LF@a83742 LF@LF
+
+GT LF@var int@83742 int@83742
+GT GF@var int@83742 int@83742
+GT TF@var int@83742 int@83742
+GT LF@var int@83742 string@string
+GT GF@var int@83742 string@string
+GT TF@var int@83742 string@string
+GT LF@var LF@a83742 string@string
+GT GF@var int@83742 LF@string
+GT TF@var LF@a83742 LF@LF
+
+EQ LF@var int@83742 int@83742
+EQ GF@var int@83742 int@83742
+EQ TF@var int@83742 int@83742
+EQ LF@var int@83742 string@string
+EQ GF@var int@83742 string@string
+EQ TF@var int@83742 string@string
+EQ LF@var LF@a83742 string@string
+EQ GF@var int@83742 LF@string
+EQ TF@var LF@a83742 LF@LF
+
+AND LF@var int@83742 int@83742
+AND GF@var int@83742 int@83742
+AND TF@var int@83742 int@83742
+AND LF@var int@83742 string@string
+AND GF@var int@83742 string@string
+AND TF@var int@83742 string@string
+AND LF@var LF@a83742 string@string
+AND GF@var int@83742 LF@string
+AND TF@var LF@a83742 LF@LF
+
+OR LF@var int@83742 int@83742
+OR GF@var int@83742 int@83742
+OR TF@var int@83742 int@83742
+OR LF@var int@83742 string@string
+OR GF@var int@83742 string@string
+OR TF@var int@83742 string@string
+OR LF@var LF@a83742 string@string
+OR GF@var int@83742 LF@string
+OR TF@var LF@a83742 LF@LF
+
+NOT LF@var int@83742 int@83742
+NOT GF@var int@83742 int@83742
+NOT TF@var int@83742 int@83742
+NOT LF@var int@83742 string@string
+NOT GF@var int@83742 string@string
+NOT TF@var int@83742 string@string
+NOT LF@var LF@a83742 string@string
+NOT GF@var int@83742 LF@string
+NOT TF@var LF@a83742 LF@LF
+
+INT2CHAR TF@var TF@var
+INT2CHAR LF@var TF@var
+INT2CHAR GF@var TF@var
+INT2CHAR GF@var int@00238
+INT2CHAR GF@var bool@false
+INT2CHAR GF@var string@
+INT2CHAR GF@var nil@nil
+
+STRI2INT TF@var TF@var TF@var
+STRI2INT TF@var TF@var int@00234
+STRI2INT TF@var int@0034 int@00234
+
+READ LF@var int
+READ LF@var string
+READ LF@var bool
+
+WRITE LF@var
+WRITE GF@var
+WRITE TF@var
+WRITE int@043
+WRITE string@
+WRITE nil@nil
+WRITE bool@true
+
+CONCAT TF@var TF@var int@4
+CONCAT LF@var TF@var TF@fjkds
+CONCAT GF@var TF@var string@
+CONCAT GF@var int@00238 string@##
+CONCAT GF@var bool@false TF@kdfjsa
+CONCAT GF@var string@ LF@kfdjs
+CONCAT GF@var nil@nil nil@nil
+#
+STRLEN TF@var TF@var
+STRLEN LF@var TF@var
+STRLEN GF@var TF@var
+STRLEN GF@var int@00238
+STRLEN GF@var bool@false
+STRLEN GF@var string@
+STRLEN GF@var nil@nil
+
+GETCHAR TF@var TF@var int@4
+GETCHAR LF@var TF@var TF@fjkds
+GETCHAR GF@var TF@var string@
+GETCHAR GF@var int@00238 string@##
+GETCHAR GF@var bool@false TF@kdfjsa
+GETCHAR GF@var string@ LF@kfdjs
+GETCHAR GF@var nil@nil nil@nil
+
+SETCHAR TF@var TF@var int@4
+SETCHAR LF@var TF@var TF@fjkds
+SETCHAR GF@var TF@var string@
+SETCHAR GF@var int@00238 string@##
+SETCHAR GF@var bool@false TF@kdfjsa
+SETCHAR GF@var string@ LF@kfdjs
+SETCHAR GF@var nil@nil nil@nil
+
+TYPE LF@fjdas LF@fjd
+TYPE LF@fjdas int@4832
+TYPE LF@fjdas string@sdfkjlsadkfj;lkdasjfl;kasdjf;lkj
+TYPE LF@fjdas bool@false
+TYPE LF@fjdas nil@nil
+
+LABEL label
+JUMP label
+
+JUMPIFEQ lafjdkasjf LF@ahoj LF@AHOJ
+JUMPIFEQ lafjdkasjf LF@ahoj int@0
+JUMPIFEQ lafjdkasjf int@0 int@0
+JUMPIFEQ lafjdkasjf int@0 GF@kfdj0aslkfj0
+
+JUMPIFNEQ lafjdkasjf LF@ahoj LF@AHOJ
+JUMPIFNEQ lafjdkasjf LF@ahoj int@0
+JUMPIFNEQ lafjdkasjf int@0 GF@kfdj0aslkfj0
+JUMPIFNEQ lafjdkasjf int@0 GF@kfdj0aslkfj0
+
+EXIT LF@jfdklsaj
+EXIT string@fjkdjlaasjfalkjfksl
+EXIT int@0
+EXIT bool@false
+EXIT nil@nil
+
+DPRINT LF@fdjs
+DPRINT int@0
+DPRINT string@
+DPRINT bool@true
+DPRINT nil@nil
+
+BREAK
