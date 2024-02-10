@@ -3,24 +3,32 @@ import re
 from sys import stderr, stdout, exit, argv
 import fileinput
 from xml.dom import minidom
-# from xml.sax.saxutils import escape
 
 
 class ParseError(Exception):
+    """
+    Chyba při zpracovánání programu jazyka IPPcode24.
+    """
+
     def __init__(self, message: str, code: int):
-        self.code = code
+        self.exit_code = code
         super().__init__(message)
 
 
 class SourceError(ParseError):
+    """
+    Chyba při kontrole lexikální nebo syntaktické správnosti jazyka IPPcode24.
+    """
+
     def __init__(self, message: str):
         super().__init__('Lexikální nebo syntaktická chyba: ' + message, 23)
 
 
 class Argument:
     """
-    comment
+    Argument instrukce jayzka IPPcode24.
     """
+
     def __init__(self, ipptype: str, text: str):
         self.ipptype = ipptype
         self.text = text
@@ -28,8 +36,9 @@ class Argument:
 
 class Instruction:
     """
-    introduction
+    Instrukce jayzka IPPcode24.
     """
+
     def __init__(self, order: int, opcode: str, *args: Argument):
         self.order = order
         self.opcode = opcode
@@ -41,8 +50,10 @@ class Instruction:
 
 def remove_comment(line: str) -> str:
     """
-    some comment removal
+    Odstraní z jednoho řádku komentář.
+    Pokud řádek žádný komentář neobsahuje, vrátí nezměněný řetězec.
     """
+
     idx = line.find('#')
 
     if idx == -1:
@@ -52,6 +63,11 @@ def remove_comment(line: str) -> str:
 
 
 def parse_variable(variable_str: str) -> Argument:
+    """
+    Převede řetězec s proměnnou jazyka IPPcode24 na její vnitřní reprezentaci.
+    Pokud není proměnná lexikálě správná, nastává chyba.
+    """
+
     match = re.match('^(LF|TF|GF)@([a-zA-Z_$&%*!?][a-zA-Z0-9_$&%*!?]*)$', variable_str)
 
     if match is None:
@@ -61,6 +77,10 @@ def parse_variable(variable_str: str) -> Argument:
 
 
 def is_ippcode_integer(integer_str: str) -> bool:
+    """
+    Zkontroluje, jestli je obsah řetězce lexikálně správná celočíselná konstanta jazyka IPPcode24.
+    """
+
     try:
         if '0x' in integer_str.lower():
             int(integer_str, 16)
@@ -75,6 +95,11 @@ def is_ippcode_integer(integer_str: str) -> bool:
 
 
 def parse_literal(literal_str: str) -> Argument:
+    """
+    Převede řetězec s konstantu jazyka IPPcode24 na její vnitřní reprezentaci,
+    pokud není konstanta lexikálně správna, nastává chyba.
+    """
+
     match = re.match('^(int|bool|string|nil)@(.*)$', literal_str)
 
     if match is None or len(match.groups()) != 2:
@@ -95,6 +120,11 @@ def parse_literal(literal_str: str) -> Argument:
 
 
 def parse_label(label_str: str) -> Argument:
+    """
+    Převede řetězec s návěstím na jeho vnitřní reprezentaci,
+    pokud není návěstí lexikálně správné, nastává chyba.
+    """
+
     if re.match(r'^([^ \t\r\n\x00-\x1F#\\]|\\[0-9]{3})+$', label_str) is None:
         raise SourceError(f'Návěstí ve špatném formátu: "{label_str}"')
 
@@ -102,14 +132,27 @@ def parse_label(label_str: str) -> Argument:
 
 
 def is_possibly_literal(literal_str: str) -> bool:
+    """
+    Zkontroluje, jestli obsah řetězce vypadá jako konstanta jazyka IPPcode24
+    """
+
     return any(literal_str.startswith(t) for t in ['int', 'bool', 'string', 'nil'])
 
 
 def is_possibly_variable(variable_str: str) -> bool:
+    """
+    Zkontroluje, jestli obsah řetězce vypadá jako proměnná jazyka IPPcode24
+    """
+
     return any(variable_str.startswith(t) for t in ['TF', 'LF', 'GF'])
 
 
 def parse_symbol(symbol_str: str) -> Argument:
+    """
+    Převede řetězec s proměnnou nebo konstantu na vnitřní reprezentaci,
+    pokud obsah řetězce není lexikálně správný, nastává chyba.
+    """
+
     if is_possibly_literal(symbol_str):
         return parse_literal(symbol_str)
     elif is_possibly_variable(symbol_str):
@@ -119,6 +162,11 @@ def parse_symbol(symbol_str: str) -> Argument:
 
 
 def parse_type(ipptype_str: str) -> Argument:
+    """
+    Převede řetězec s datovým typem jazyka IPPcode24 na jeho vnitřní reprezentaci,
+    pokud typ není lexikálně psrávný, nastává chyba.
+    """
+
     if ipptype_str not in ('int', 'string', 'bool'):
         raise SourceError(f'neznámý typ: "{ipptype_str}"')
 
@@ -126,16 +174,24 @@ def parse_type(ipptype_str: str) -> Argument:
 
 
 def tokenize_line(line: str) -> List[str]:
-    result = remove_comment(line).strip()
-    result = result.split()
+    """
+    Odstraní komentář a rozdělí řádek na podřetězce tak, aby každý podřetězec obsahoval jeden token.
+    U podřetězce s operačním kódem převede všechna malá písmena na velká.
+    """
 
-    if len(result) > 0:
-        result[0] = result[0].upper()
+    parts = remove_comment(line).strip().split()
 
-    return result
+    if len(parts) > 0:
+        parts[0] = parts[0].upper()
+
+    return parts
 
 
 def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
+    """
+    Převede posloupnost řádků vstupního programu v jazyce IPPcode24 na vnitřní reprezentaci programu.
+    """
+
     if not lines or lines[0] != '.IPPcode24\n':
         raise ParseError('Chybná nebo chybějící hlavička', 21)
 
@@ -189,27 +245,31 @@ def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
 
 
 def instructions_to_xml(instructions: Iterable[Instruction]) -> minidom.Document:
-    doc = minidom.Document()
+    """
+    Převede vnitřní reprezantaci instrukcí na XML dokument.
+    """
 
-    root = doc.createElement('program')
+    document = minidom.Document()
+
+    root = document.createElement('program')
     root.setAttribute('language', 'IPPcode24')
-    doc.appendChild(root)
+    document.appendChild(root)
 
     for instruction in instructions:
-        elem = doc.createElement('instruction')
-        elem.setAttribute('order', str(instruction.order))
-        elem.setAttribute('opcode', instruction.opcode)
+        ins_elem = document.createElement('instruction')
+        ins_elem.setAttribute('order', str(instruction.order))
+        ins_elem.setAttribute('opcode', instruction.opcode)
 
         for arg_idx, arg in enumerate(instruction.args, 1):
-            arg_elem = doc.createElement(f'arg{arg_idx}')
+            arg_elem = document.createElement(f'arg{arg_idx}')
             arg_elem.setAttribute('type', arg.ipptype)
-            text_node = doc.createTextNode(arg.text)
-            arg_elem.appendChild(text_node)
-            elem.appendChild(arg_elem)
+            arg_text_node = document.createTextNode(arg.text)
+            arg_elem.appendChild(arg_text_node)
+            ins_elem.appendChild(arg_elem)
 
-        root.appendChild(elem)
+        root.appendChild(ins_elem)
 
-    return doc
+    return document
 
 
 def main():
@@ -232,7 +292,7 @@ def main():
     document = instructions_to_xml(instructions)
 
     try:
-        document.writexml(stdout, indent='  ', addindent='  ', newl='\n', encoding='utf-8')
+        document.writexml(stdout, addindent='  ', newl='\n', encoding='utf-8')
     except Exception as err:
         raise ParseError(str(err), 12)
 
@@ -241,7 +301,7 @@ try:
     main()
 except ParseError as err:
     print(err, file=stderr)
-    exit(err.code)
+    exit(err.exit_code)
 except Exception as err:
     print('Internal error:', err, file=stderr)
     exit(99)
