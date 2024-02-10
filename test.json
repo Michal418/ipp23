@@ -12,6 +12,12 @@
             "code": 0,
             "inputs": [
                 ".IPPcode24\nWRITE int@-5\n",
+                ".IPPcode24\nWRITE int@+5\n",
+                ".IPPcode24\nWRITE int@0x4ab3f2\n",
+                ".IPPcode24\nWRITE int@0o132756\n",
+                ".IPPcode24\nWRITE int@0X4ab3f2\n",
+                ".IPPcode24\nWRITE int@0O132756\n",
+                ".IPPcode24\nWRITE int@0o0000\n",
                 ".IPPcode24\nWRITE int@000000000000\n",
                 ".IPPcode24\nWRITE bool@true\n",
                 ".IPPcode24\nWRITE bool@false\n",

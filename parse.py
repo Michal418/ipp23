@@ -51,6 +51,20 @@ def parse_variable(variable_str: str) -> Argument:
     return Argument('var', variable_str)
 
 
+def is_ippcode_integer(integer_str: str) -> bool:
+    try:
+        if '0x' in integer_str.lower():
+            int(integer_str, 16)
+        elif '0o' in integer_str.lower():
+            int(integer_str, 8)
+        else:
+            int(integer_str, 10)
+
+        return True
+    except:
+        return False
+
+
 def parse_literal(literal_str: str) -> Argument:
     match = re.match('^(int|bool|string|nil)@(.*)$', literal_str)
 
@@ -59,7 +73,7 @@ def parse_literal(literal_str: str) -> Argument:
 
     typestr, value = match.groups()
 
-    if typestr == 'int' and re.match('^-?[0-9]+$', value) is None:
+    if typestr == 'int' and not is_ippcode_integer(value): # and re.match('^(+|-)?[0-9]+$', value) is None:
         raise SourceError(f'Celočíselná konstanta ve špatném formátu: "{literal_str}"')
     elif typestr == 'bool' and value not in ('true', 'false'):
         raise SourceError(f'Booleanská konstanta ve špatném formátu: "{literal_str}"')
