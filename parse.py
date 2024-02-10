@@ -206,9 +206,6 @@ def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
     for line in lines[1:]:
         tokens = tokenize_line(line)
 
-        if tokens and tokens[0] not in OPCODES:
-            raise ParseError(f'Neznámý nebo chybný operační kód: "{tokens[0]}"', 22)
-
         match tokens:
             case ('CREATEFRAME' | 'PUSHFRAME' | 'POPFRAME' | 'RETURN' | 'BREAK') as opcode,:
                 yield Instruction(order, opcode)
@@ -227,7 +224,7 @@ def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
                 yield Instruction(order, opcode, parse_symbol(symb))
 
             case ('POPS' | 'DEFVAR') as opcode, var:
-                yield Instruction(order, 'POPS', parse_variable(var))
+                yield Instruction(order, opcode, parse_variable(var))
 
             case 'READ', var, ipptype:
                 yield Instruction(order, 'READ', parse_type(ipptype))
@@ -239,7 +236,10 @@ def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
                 continue
 
             case _:
-                raise SourceError(f'Špatný počet argumentů: "{tokens}"')
+                if tokens[0] not in OPCODES:
+                    raise ParseError(f'Neznámý nebo chybný operační kód: "{tokens[0]}"', 22)
+                else:
+                    raise SourceError(f'Špatný počet argumentů: "{tokens}"')
 
         order += 1
 

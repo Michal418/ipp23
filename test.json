@@ -55,7 +55,7 @@
         {
             "description": "bad-literals",
             "code": 23,
-            "stderr": "hide",
+            "stderr": "show",
             "inputs": [
                 ".IPPcode24\nWRITE int@notint\n",
                 ".IPPcode24\nWRITE nil@jfdskajflskdajflksdjf\n",
