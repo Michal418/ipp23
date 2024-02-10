@@ -18,6 +18,9 @@ class SourceError(ParseError):
 
 
 class Argument:
+    """
+    comment
+    """
     def __init__(self, ipptype: str, text: str):
         self.ipptype = ipptype
         self.text = text
@@ -34,6 +37,10 @@ class Instruction:
 
 
 def remove_comment(line: str) -> str:
+    """
+    remove comment from line
+
+    """
     idx = line.find('#')
 
     if idx == -1:
