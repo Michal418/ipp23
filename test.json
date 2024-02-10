@@ -5,7 +5,12 @@
         {
             "description": "basic",
             "code": 0,
-            "files": ["basic.txt", "test.txt"]
+            "files": ["basic.txt", "test.txt"],
+            "inputs": [
+                "#\n.IPPcode24\n",
+                ".IPPcode24\n",
+                "\n\n   \n\t \t \n  \t .IPPcode24\n"
+            ]
         },
         {
             "description": "literals",

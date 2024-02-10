@@ -141,4 +141,5 @@ def main():
 
     print(tester.result())
 
-main()
+if __name__ == '__main__':
+    main()

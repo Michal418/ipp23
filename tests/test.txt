@@ -1,17 +1,17 @@
 .IPPcode24
 move LF@var int@002
-move TF@var int@002
-move GF@var int@002
+  move TF@var int@002
+ move GF@var int@002
 move GF@var LF@bar
 move GF@var TF@bar
 move GF@var GF@bar
-move GF@var string@str
+ move GF@var string@str   
 move GF@var bool@true
 move GF@var bool@false
 move GF@var nil@nil
-
-CREATEFRAME
-PUSHFRAME
+          
+  CREATEFRAME
+ PUSHFRAME
 POPFRAME
 
 DEFVAR TF@Vvar
@@ -23,7 +23,7 @@ RETURN
 
 PUSHS int@0987390
 PUSHS bool@true
-PUSHS bool@false
+  PUSHS bool@false
 PUSHS nil@nil
 PUSHS string@somegshjelk\098rjs
 PUSHS LF@ksdfj
@@ -37,7 +37,7 @@ POPS LF@var
 ADD LF@var int@83742 int@83742
 ADD GF@var int@83742 int@83742
 ADD TF@var int@83742 int@83742
-ADD LF@var int@83742 string@string
+ADD       LF@var int@83742 string@string
 ADD GF@var int@83742 string@string
 ADD TF@var int@83742 string@string
 ADD LF@var LF@a83742 string@string
@@ -218,7 +218,7 @@ EXIT nil@nil
 DPRINT LF@fdjs
 DPRINT int@0
 DPRINT string@
-DPRINT bool@true
+  DPRINT bool@true
 DPRINT nil@nil
 
 BREAK

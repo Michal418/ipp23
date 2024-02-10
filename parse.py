@@ -3,6 +3,7 @@ import re
 from sys import stderr, stdout, exit, argv
 import fileinput
 from xml.dom import minidom
+from xml.sax.saxutils import unescape
 
 
 class ParseError(Exception):
@@ -33,6 +34,12 @@ class Argument:
         self.ipptype = ipptype
         self.text = text
 
+    def __str__(self):
+        if self.ipptype in ('string', 'bool', 'int', 'nil'):
+            return f'{self.ipptype}@{unescape(self.text)}'
+        else:
+            return self.text
+
 
 class Instruction:
     """
@@ -47,6 +54,13 @@ class Instruction:
         if len(args) > 3:
             raise RuntimeError('Počet argumentů musí být menší nebo roven 3')
 
+    def __str__(self):
+        result = self.opcode
+
+        if self.args:
+            result += ' ' + ' '.join(str(a) for a in self.args)
+
+        return result
 
 def remove_comment(line: str) -> str:
     """
@@ -170,7 +184,7 @@ def parse_type(ipptype_str: str) -> Argument:
     if ipptype_str not in ('int', 'string', 'bool'):
         raise SourceError(f'neznámý typ: "{ipptype_str}"')
 
-    return Argument(ipptype_str, ipptype_str)
+    return Argument('type', ipptype_str)
 
 
 def tokenize_line(line: str) -> List[str]:
@@ -187,12 +201,30 @@ def tokenize_line(line: str) -> List[str]:
     return parts
 
 
+def find_header(lines: List[str]) -> int:
+    """
+    Najde v posloupnosti řádků hlavičku programu IPPcode24 a vrátí index řádku s touto hlavičkou.
+    Pokud halvička nebyla nalezena, vrací -1.
+    """
+
+    for line_idx, line in enumerate(lines):
+        if re.match(r'^[^\S\r\n]*(\.IPPcode24)[^\S\r\n]*(#.*)?$', line):
+            return line_idx
+        elif not re.match(r'^[^\S\r\n]*(#.*)?$', line):
+            return -1
+
+    return -1
+
+
 def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
     """
     Převede posloupnost řádků vstupního programu v jazyce IPPcode24 na vnitřní reprezentaci programu.
     """
 
-    if not lines or lines[0] != '.IPPcode24\n':
+    header_line_idx = find_header(lines)
+
+    if header_line_idx == -1:
+        stderr.writelines(lines)
         raise ParseError('Chybná nebo chybějící hlavička', 21)
 
     OPCODES = ('CREATEFRAME', 'PUSHFRAME', 'POPFRAME', 'RETURN', 'BREAK',
@@ -203,7 +235,7 @@ def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
                'DPRINT', 'EXIT', 'POPS', 'DEFVAR', 'READ', 'JUMPIFEQ', 'JUMPIFNEQ')
 
     order = 1
-    for line in lines[1:]:
+    for line in lines[header_line_idx+1:]:
         tokens = tokenize_line(line)
 
         match tokens:
@@ -227,7 +259,7 @@ def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
                 yield Instruction(order, opcode, parse_variable(var))
 
             case 'READ', var, ipptype:
-                yield Instruction(order, 'READ', parse_type(ipptype))
+                yield Instruction(order, 'READ', parse_variable(var), parse_type(ipptype))
 
             case ('JUMPIFEQ' | 'JUMPIFNEQ') as opcode, label, symb1, symb2:
                 yield Instruction(order, opcode, parse_label(label), parse_symbol(symb1), parse_symbol(symb2))
@@ -292,18 +324,19 @@ def main():
     document = instructions_to_xml(instructions)
 
     try:
-        document.writexml(stdout, addindent='  ', newl='\n', encoding='utf-8')
+        document.writexml(stdout, addindent='    ', newl='\n', encoding='utf-8')
     except Exception as err:
         raise ParseError(str(err), 12)
 
 
-try:
-    main()
-except ParseError as err:
-    print(err, file=stderr)
-    exit(err.exit_code)
-except Exception as err:
-    print('Internal error:', err, file=stderr)
-    exit(99)
-else:
-    exit(0)
+if __name__ == '__main__':
+    try:
+        main()
+    except ParseError as err:
+        print(err, file=stderr)
+        exit(err.exit_code)
+    except Exception as err:
+        print('Internal error:', err, file=stderr)
+        exit(99)
+    else:
+        exit(0)

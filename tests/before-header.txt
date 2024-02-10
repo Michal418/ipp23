@@ -1,1 +1,2 @@
+MOVE a
  .IPPcode24
