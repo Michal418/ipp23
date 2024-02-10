@@ -27,6 +27,9 @@ class Argument:
 
 
 class Instruction:
+    """
+    introduction
+    """
     def __init__(self, order: int, opcode: str, *args: Argument):
         self.order = order
         self.opcode = opcode
@@ -38,8 +41,7 @@ class Instruction:
 
 def remove_comment(line: str) -> str:
     """
-    remove comment from line
-
+    some comment removal
     """
     idx = line.find('#')
 
