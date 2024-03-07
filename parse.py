@@ -1,14 +1,13 @@
 from typing import List, Generator, Iterable
 import re
-from sys import stderr, stdout, exit, argv
-import fileinput
+from sys import stdin, stderr, stdout, exit, argv
 from xml.dom import minidom
 from xml.sax.saxutils import unescape
 
 
 class ParseError(Exception):
     """
-    Chyba při zpracovánání programu jazyka IPPcode24.
+    Chyba při zpracovávání programu jazyka IPPcode24.
     """
 
     def __init__(self, message: str, code: int):
@@ -27,7 +26,7 @@ class SourceError(ParseError):
 
 class Argument:
     """
-    Argument instrukce jayzka IPPcode24.
+    Argument instrukce jazyka IPPcode24.
     """
 
     def __init__(self, ipptype: str, text: str):
@@ -43,7 +42,7 @@ class Argument:
 
 class Instruction:
     """
-    Instrukce jayzka IPPcode24.
+    Instrukce jazyka IPPcode24.
     """
 
     def __init__(self, order: int, opcode: str, *args: Argument):
@@ -79,10 +78,10 @@ def remove_comment(line: str) -> str:
 def parse_variable(variable_str: str) -> Argument:
     """
     Převede řetězec s proměnnou jazyka IPPcode24 na její vnitřní reprezentaci.
-    Pokud není proměnná lexikálě správná, nastává chyba.
+    Pokud není proměnná lexikálně správná, nastává chyba.
     """
 
-    match = re.match('^(LF|TF|GF)@([a-zA-Z_$&%*!?][a-zA-Z0-9_$&%*!?]*)$', variable_str)
+    match = re.match(r'^(LF|TF|GF)@([a-zA-Z_\-$&%*!?][a-zA-Z0-9_\-$&%*!?]*)$', variable_str)
 
     if match is None:
         raise SourceError(f'Proměnná ve špatném formátu: "{variable_str}"')
@@ -111,7 +110,7 @@ def is_ippcode_integer(integer_str: str) -> bool:
 def parse_literal(literal_str: str) -> Argument:
     """
     Převede řetězec s konstantu jazyka IPPcode24 na její vnitřní reprezentaci,
-    pokud není konstanta lexikálně správna, nastává chyba.
+    pokud není konstanta lexikálně správná, nastává chyba.
     """
 
     match = re.match('^(int|bool|string|nil)@(.*)$', literal_str)
@@ -121,7 +120,7 @@ def parse_literal(literal_str: str) -> Argument:
 
     typestr, value = match.groups()
 
-    if typestr == 'int' and not is_ippcode_integer(value): # and re.match('^(+|-)?[0-9]+$', value) is None:
+    if typestr == 'int' and not is_ippcode_integer(value):
         raise SourceError(f'Celočíselná konstanta ve špatném formátu: "{literal_str}"')
     elif typestr == 'bool' and value not in ('true', 'false'):
         raise SourceError(f'Booleanská konstanta ve špatném formátu: "{literal_str}"')
@@ -178,7 +177,7 @@ def parse_symbol(symbol_str: str) -> Argument:
 def parse_type(ipptype_str: str) -> Argument:
     """
     Převede řetězec s datovým typem jazyka IPPcode24 na jeho vnitřní reprezentaci,
-    pokud typ není lexikálně psrávný, nastává chyba.
+    pokud typ není lexikálně správný, nastává chyba.
     """
 
     if ipptype_str not in ('int', 'string', 'bool'):
@@ -201,14 +200,16 @@ def tokenize_line(line: str) -> List[str]:
     return parts
 
 
-def find_header(lines: List[str]) -> int:
+def find_header(lines: List[str], ifj23_header: bool) -> int:
     """
     Najde v posloupnosti řádků hlavičku programu IPPcode24 a vrátí index řádku s touto hlavičkou.
-    Pokud halvička nebyla nalezena, vrací -1.
+    Pokud hlavička nebyla nalezena, vrací -1.
     """
 
+    header = 'IPPcode24' if not ifj23_header else 'IFJcode23'
+
     for line_idx, line in enumerate(lines):
-        if re.match(r'^[^\S\r\n]*(\.IPPcode24)[^\S\r\n]*(#.*)?$', line):
+        if re.match(fr'^[^\S\r\n]*(\.{header})[^\S\r\n]*(#.*)?$', line):
             return line_idx
         elif not re.match(r'^[^\S\r\n]*(#.*)?$', line):
             return -1
@@ -216,19 +217,18 @@ def find_header(lines: List[str]) -> int:
     return -1
 
 
-def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
+def parse_program(lines: List[str], ifj23_header: bool) -> Generator[Instruction, None, None]:
     """
     Převede posloupnost řádků vstupního programu v jazyce IPPcode24 na vnitřní reprezentaci programu.
     """
 
-    header_line_idx = find_header(lines)
+    header_line_idx = find_header(lines, ifj23_header)
 
     if header_line_idx == -1:
-        stderr.writelines(lines)
         raise ParseError('Chybná nebo chybějící hlavička', 21)
 
     OPCODES = ('CREATEFRAME', 'PUSHFRAME', 'POPFRAME', 'RETURN', 'BREAK',
-               'CALL', 'LABEL', 'JUMP', 'MOVE', 'INT2CHAR', 'STRLEN', 'TYPE',
+               'CALL', 'LABEL', 'JUMP', 'INT2CHAR', 'STRLEN', 'TYPE',
                'MOVE', 'INT2CHAR', 'STRLEN', 'TYPE', 'ADD', 'SUB', 'MUL',
                'IMUL', 'DIV', 'IDIV', 'LT', 'GT', 'EQ', 'AND', 'OR', 'NOT',
                'CONCAT', 'GETCHAR', 'SETCHAR', 'STRI2INT', 'PUSHS', 'WRITE',
@@ -245,11 +245,11 @@ def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
             case ('CALL' | 'LABEL' | 'JUMP') as opcode, label:
                 yield Instruction(order, opcode, parse_label(label))
 
-            case ('MOVE' | 'INT2CHAR' | 'STRLEN' | 'TYPE') as opcode, var, symb:
+            case ('MOVE' | 'INT2CHAR' | 'STRLEN' | 'TYPE' | 'NOT') as opcode, var, symb:
                 yield Instruction(order, opcode, parse_variable(var), parse_symbol(symb))
 
             case ('ADD' | 'SUB' | 'MUL' | 'IMUL' | 'DIV' | 'IDIV' | 'LT' | 'GT' | 'EQ' |
-                  'AND' | 'OR' | 'NOT' | 'CONCAT' | 'GETCHAR' | 'SETCHAR' | 'STRI2INT') as opcode, var, symb1, symb2:
+                  'AND' | 'OR' | 'CONCAT' | 'GETCHAR' | 'SETCHAR' | 'STRI2INT') as opcode, var, symb1, symb2:
                 yield Instruction(order, opcode, parse_variable(var), parse_symbol(symb1), parse_symbol(symb2))
 
             case ('PUSHS' | 'WRITE' | 'DPRINT' | 'EXIT') as opcode, symb:
@@ -271,14 +271,14 @@ def parse_program(lines: List[str]) -> Generator[Instruction, None, None]:
                 if tokens[0] not in OPCODES:
                     raise ParseError(f'Neznámý nebo chybný operační kód: "{tokens[0]}"', 22)
                 else:
-                    raise SourceError(f'Špatný počet argumentů: "{tokens}"')
+                    raise SourceError(f'Špatný počet argumentů: {tokens}')
 
         order += 1
 
 
 def instructions_to_xml(instructions: Iterable[Instruction]) -> minidom.Document:
     """
-    Převede vnitřní reprezantaci instrukcí na XML dokument.
+    Převede vnitřní reprezentaci instrukcí na XML dokument.
     """
 
     document = minidom.Document()
@@ -309,18 +309,22 @@ def main():
            'zkontroluje lexikální a sytaktickou správnost kódu a ' \
            'vypíše na standardní výstup XML reprezentaci programu.'
 
+    ifj23_header = False
+
     if len(argv) == 2 and argv[1] == '--help':
         print(HELP)
         return
+    elif len(argv) == 2 and argv[1] == '--header':
+        ifj23_header = True
     elif len(argv) > 2:
         raise ParseError('Zakázaná kombinace parametrů', 10)
 
     try:
-        lines = fileinput.input(encoding='utf-8')
+        lines = stdin.readlines()
     except Exception as err:
         raise ParseError(str(err), 11)
 
-    instructions = parse_program(list(lines))
+    instructions = parse_program(list(lines), ifj23_header)
     document = instructions_to_xml(instructions)
 
     try:

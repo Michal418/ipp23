@@ -9,7 +9,8 @@
             "inputs": [
                 "#\n.IPPcode24\n",
                 ".IPPcode24\n",
-                "\n\n   \n\t \t \n  \t .IPPcode24\n"
+                "\n\n   \n\t \t \n  \t .IPPcode24\n",
+                ".IPPcode24\r\nMOVE LF@var int@2##co##mm@met##\r\n#"
             ]
         },
         {
@@ -31,7 +32,7 @@
                 ".IPPcode24\nWRITE string@ahoj\\013ahoj\n",
                 ".IPPcode24\nWRITE string@\n",
                 ".IPPcode24\nWRITE string@!@$%^&*()<>?:\"{}`~\n",
-                ".IPPcode24\nWRITE string@příliž_žluťoučkž_koník\n",
+                ".IPPcode24\nWRITE string@příliž_žluťoučký_koník\n",
                 ".IPPcode24\nWRITE string@インターネット・バブル\n"
             ]
         },
